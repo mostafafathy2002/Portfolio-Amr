@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iron factory - مشروع</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #053569e0;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(17, 95, 158, 0.753);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            color: #fcfcfc;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .back-btn:hover {
+            background: #0056b3;
+        }
+    
+        /* --- Image Carousel --- */
+        .carousel { display:flex; align-items:center; justify-content:center; gap:12px; margin-top: 12px; }
+        .carousel-btn { padding: 10px 14px; border: none; border-radius: 8px; background: #007bff; color: #fff; cursor: pointer; }
+        .carousel-btn:hover { background: #0056b3; }
+        .carousel-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .carousel-counter { margin-top: 10px; opacity: 0.9; font-size: 14px; color: #fcfcfc; }
+        .slide { display:none; margin: 12px auto; }
+        .slide.active { display:block; }
+</style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Iron factory</h1>
+      <p>In the B2B and heavy industries sector, the focus was on attracting
+        serious inquiries from traders, contractors, and companies via
+        messaging, using Direct Copy and Creative, which highlighted
+        productivity and pricing, resulting in strong message volume at a
+        reasonable cost relative to the deal value.</p>
+      <img src="img2/مصنع حديد.jpeg" alt="Iron factory" />
+      
+      <br>
+      <a href="index.html" class="back-btn">العودة إلى الصفحة الرئيسية</a>
+    </div>
+
+    <script>
+      (function () {
+        const container = document.querySelector('.container');
+        if (!container) return;
+
+        // Collect images that belong to this project page
+        const slides = Array.from(container.querySelectorAll('img'));
+        if (slides.length === 0) return;
+
+        // Mark slides (without changing src / filenames)
+        slides.forEach(img => img.classList.add('slide'));
+
+        // Insert controls before the first image
+        const firstImg = slides[0];
+        const controlsWrapper = document.createElement('div');
+        controlsWrapper.innerHTML = `
+          <div class="carousel" data-carousel>
+            <button type="button" class="carousel-btn next" aria-label="Next image">▶</button>
+            <button type="button" class="carousel-btn prev" aria-label="Previous image">◀</button>
+          </div>
+          <div class="carousel-counter" id="carouselCounter"></div>
+        `;
+        container.insertBefore(controlsWrapper, firstImg);
+
+        const prevBtn = container.querySelector('[data-carousel] .prev');
+        const nextBtn = container.querySelector('[data-carousel] .next');
+        const counter = container.querySelector('#carouselCounter');
+
+        let index = 0;
+        function show(i) {
+          index = (i + slides.length) % slides.length;
+          slides.forEach((img, idx) => img.classList.toggle('active', idx === index));
+          if (counter) counter.textContent = `${index + 1} / ${slides.length}`;
+          const single = slides.length <= 1;
+          if (prevBtn) prevBtn.disabled = single;
+          if (nextBtn) nextBtn.disabled = single;
+        }
+
+        if (prevBtn) prevBtn.addEventListener('click', () => show(index - 1));
+        if (nextBtn) nextBtn.addEventListener('click', () => show(index + 1));
+
+        // Keyboard arrows
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowLeft') show(index - 1);
+          if (e.key === 'ArrowRight') show(index + 1);
+        });
+
+        // Touch swipe (mobile)
+        let startX = null;
+        container.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
+        container.addEventListener('touchend', (e) => {
+          if (startX == null) return;
+          const endX = e.changedTouches[0].clientX;
+          const dx = endX - startX;
+          if (Math.abs(dx) > 40) {
+            if (dx > 0) show(index - 1);
+            else show(index + 1);
+          }
+          startX = null;
+        }, { passive: true });
+
+        show(0);
+      })();
+    </script>
+
+  </body>
+</html>
